@@ -1,0 +1,197 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ввод и вывод информации — FP.curs</title>
+    <meta name="description" content="printf, scanf, спецификаторы формата, аккуратность ввода.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="../../assets/lesson.css">
+    <link rel="stylesheet" href="../../assets/course-nav.css">
+</head>
+<body>
+    <header class="topbar">
+        <button class="icon-btn menu-btn" id="menu" type="button" aria-label="Список тем курса" aria-expanded="false">☰</button>
+        <a class="brand" href="../../index.html">
+            <span class="brand-mark">FP<span>.</span>curs</span>
+            <span class="brand-sub">Тема 04 · C</span>
+        </a>
+        <div class="topbar-actions">
+            <button class="icon-btn" id="theme" type="button">Тема: auto</button>
+        </div>
+        <span class="progress" aria-hidden="true"></span>
+    </header>
+    <button type="button" class="nav-backdrop" id="nav-backdrop" aria-label="Закрыть меню" aria-hidden="true"></button>
+    <div class="layout">
+        <aside class="sidebar" id="sidebar" aria-label="Темы курса">
+            <div class="search">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7" cy="7" r="5"/><path d="m11 11 3.5 3.5"/></svg>
+                <input id="search" type="search" placeholder="Поиск темы…" aria-label="Поиск темы">
+            </div>
+            <ol class="toc" id="toc"></ol>
+            <p class="toc-empty" id="toc-empty" hidden>Ничего не найдено.</p>
+        </aside>
+        <main class="content" id="top">
+            <div class="hero">
+                <span class="kicker">Основы программирования · тема 04</span>
+                <h1>Ввод и вывод информации</h1>
+                <p>Научимся печатать на экран и читать данные с клавиатуры через stdio.h: printf и scanf.</p>
+                <div class="hero-stats">
+                    <span class="chip"><b id="stat-sections">0</b> разделов</span>
+                    <span class="chip"><b id="stat-demos">0</b> примеров C</span>
+                    <span class="chip"><b id="stat-qa">0</b> вопросов</span>
+                </div>
+            </div>
+<section class="lesson" id="s0" data-num="0" data-title="stdio.h: printf и scanf">
+<script type="text/markdown">
+| Функция | Направление | Идея |
+|---|---|---|
+| `printf` | программа → экран | форматная строка + аргументы |
+| `scanf` | клавиатура → переменные | формат + **адреса** (`&x`) |
+
+Нужен заголовок:
+
+```c
+#include <stdio.h>
+```
+
+### Важные спецификаторы
+
+| Спецификатор | Тип |
+|---|---|
+| `%d` | `int` |
+| `%lld` | `long long` |
+| `%f` / `%lf` | `float` / `double` (в `scanf` для double — `%lf`) |
+| `%c` | `char` |
+| `%s` | строка (`char[]`) |
+| `\n` | новая строка (в строке формата) |
+</script>
+</section>
+
+<section class="lesson" id="s1" data-num="1" data-title="Вывод подробно">
+<script type="text/markdown">
+### Базовый шаблон
+
+```c
+printf("x = %d, y = %d\n", x, y);
+```
+
+Сначала формат, потом значения — **по порядку** и с **совпадающими** типами.
+</script>
+
+<div class="cpp" data-title="Форматирование сообщения" data-desc="Текст + числа в одной строке.">
+<script type="text/cpp">
+#include <stdio.h>
+
+int main(void) {
+    int a = 5, b = 12;
+    printf("a = %d\n", a);
+    printf("b = %d\n", b);
+    printf("%d + %d = %d\n", a, b, a + b);
+    return 0;
+}
+</script>
+<script type="application/json">{"stdout": "a = 5\nb = 12\n5 + 12 = 17"}</script>
+</div>
+
+<div class="cpp" data-title="Таблица из printf" data-desc="Несколько строк вывода, табуляция.">
+<script type="text/cpp">
+#include <stdio.h>
+
+int main(void) {
+    printf("name\tage\n");
+    printf("Anna\t20\n");
+    printf("Ion\t19\n");
+    return 0;
+}
+</script>
+<script type="application/json">{"stdout": "name\tage\nAnna\t20\nIon\t19"}</script>
+</div>
+</section>
+
+<section class="lesson" id="s2" data-num="2" data-title="Ввод подробно">
+<script type="text/markdown">
+### Чтение
+
+```c
+int x;
+scanf("%d", &x);   /* обязателен адрес: &x */
+```
+
+Можно читать несколько значений:
+
+```c
+scanf("%d %d %d", &a, &b, &c);
+```
+
+**Диалог:** сначала подсказка через `printf`, потом `scanf`.
+</script>
+
+<div class="cpp" data-title="Диалог: сумма двух чисел" data-desc="Симуляция ввода: пользователь набрал 4 и 9.">
+<script type="text/cpp">
+#include <stdio.h>
+
+int main(void) {
+    int a, b;
+    printf("Vvedite dva celyh chisla: ");
+    scanf("%d %d", &a, &b);   /* в симуляции: 4 9 */
+    printf("Summa = %d\n", a + b);
+    printf("Raznost = %d\n", a - b);
+    return 0;
+}
+</script>
+<script type="application/json">{"stdout": "Vvedite dva celyh chisla: 4 9\nSumma = 13\nRaznost = -5"}</script>
+</div>
+
+<div class="cpp" data-title="Ввод double и char" data-desc="Разные спецификаторы в одном scanf.">
+<script type="text/cpp">
+#include <stdio.h>
+
+int main(void) {
+    double price;
+    char currency;
+    printf("Price and currency code: ");
+    scanf("%lf %c", &price, &currency);  /* 19.99 M */
+    printf("You entered %g %c\n", price, currency);
+    return 0;
+}
+</script>
+<script type="application/json">{"stdout": "Price and currency code: 19.99 M\nYou entered 19.99 M"}</script>
+</div>
+</section>
+
+<section class="lesson" id="s3" data-num="3" data-title="Частые проблемы">
+<script type="text/markdown">
+| Ситуация | Что бывает |
+|---|---|
+| Забыли `&` в `scanf` | неопределённое поведение / падение |
+| Неверный спецификатор (`%d` для double) | мусор / ошибка |
+| Ждали число, ввели букву | `scanf` не записал значение как ожидалось |
+| Забыли подсказку | пользователь не знает, что вводить |
+
+> [!TIP]
+> Правило: `printf` — значения; `scanf` — **адреса** (`&переменная`), кроме массивов-строк.
+</script>
+</section>
+
+<section class="lesson" id="s4" data-num="4" data-title="Самопроверка">
+<script type="text/markdown">
+Сначала ответьте сами, затем откройте правильный ответ.
+</script>
+<details class="qa"><summary>1. Какой спецификатор у int в printf/scanf?</summary><div class="qa-a"><code>%d</code></div></details>
+<details class="qa"><summary>2. Почему в scanf пишут <code>&amp;x</code>?</summary><div class="qa-a">Нужен адрес переменной, чтобы функция записала туда введённое значение.</div></details>
+<details class="qa"><summary>3. Как вывести число x и перейти на новую строку?</summary><div class="qa-a"><code>printf("%d\n", x);</code></div></details>
+</section>
+
+            <footer class="page-foot">
+                <p>Вывод в примерах <strong>симулирован</strong> (типичный результат). Скопируйте код (.c) и проверьте в Visual Studio, Code::Blocks или на onlinegdb.com (язык C).</p>
+            </footer>
+        </main>
+    </div>
+    <button class="icon-btn to-top" type="button" aria-label="Наверх">↑</button>
+    <script src="../../assets/lesson.js"></script>
+    <script src="../../assets/course-nav.js"></script>
+</body>
+</html>

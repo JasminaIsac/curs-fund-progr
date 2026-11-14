@@ -1,0 +1,191 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Одномерные массивы — FP.curs</title>
+    <meta name="description" content="Объявление, индексы, ввод, сумма, min/max, поиск, копирование.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="../../assets/lesson.css">
+    <link rel="stylesheet" href="../../assets/course-nav.css">
+</head>
+<body>
+    <header class="topbar">
+        <button class="icon-btn menu-btn" id="menu" type="button" aria-label="Список тем курса" aria-expanded="false">☰</button>
+        <a class="brand" href="../../index.html">
+            <span class="brand-mark">FP<span>.</span>curs</span>
+            <span class="brand-sub">Тема 10 · C</span>
+        </a>
+        <div class="topbar-actions">
+            <button class="icon-btn" id="theme" type="button">Тема: auto</button>
+        </div>
+        <span class="progress" aria-hidden="true"></span>
+    </header>
+    <button type="button" class="nav-backdrop" id="nav-backdrop" aria-label="Закрыть меню" aria-hidden="true"></button>
+    <div class="layout">
+        <aside class="sidebar" id="sidebar" aria-label="Темы курса">
+            <div class="search">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7" cy="7" r="5"/><path d="m11 11 3.5 3.5"/></svg>
+                <input id="search" type="search" placeholder="Поиск темы…" aria-label="Поиск темы">
+            </div>
+            <ol class="toc" id="toc"></ol>
+            <p class="toc-empty" id="toc-empty" hidden>Ничего не найдено.</p>
+        </aside>
+        <main class="content" id="top">
+            <div class="hero">
+                <span class="kicker">Основы программирования · тема 10</span>
+                <h1>Одномерные массивы</h1>
+                <p>Массив — набор однотипных элементов. Научимся объявлять, обходить и решать типовые задачи на C.</p>
+                <div class="hero-stats">
+                    <span class="chip"><b id="stat-sections">0</b> разделов</span>
+                    <span class="chip"><b id="stat-demos">0</b> примеров C</span>
+                    <span class="chip"><b id="stat-qa">0</b> вопросов</span>
+                </div>
+            </div>
+<section class="lesson" id="s0" data-num="0" data-title="Понятие массива">
+<script type="text/markdown">
+Вместо десяти переменных `x0…x9` — один массив:
+
+```c
+int a[10];
+```
+
+| Понятие | Смысл |
+|---|---|
+| размер | сколько элементов (здесь 10) |
+| индекс | номер от **0** до **9** |
+| `a[i]` | элемент с номером i |
+
+> [!WARN]
+> `a[10]` при размере 10 — **выход за границу**. Компилятор часто не ловит — получите мусор или падение.
+</script>
+</section>
+
+<section class="lesson" id="s1" data-num="1" data-title="Инициализация и вывод">
+<div class="cpp" data-title="Инициализация и печать" data-desc="Цикл for по индексам.">
+<script type="text/cpp">
+#include <stdio.h>
+
+int main(void) {
+    int a[5] = {2, 4, 6, 8, 10};
+    int i;
+    for (i = 0; i < 5; i++) {
+        printf("a[%d]=%d\n", i, a[i]);
+    }
+    return 0;
+}
+</script>
+<script type="application/json">{"stdout": "a[0]=2\na[1]=4\na[2]=6\na[3]=8\na[4]=10"}</script>
+</div>
+
+<div class="cpp" data-title="Заполнение вводом (симуляция)" data-desc="Как будто ввели 1 3 5 7">
+<script type="text/cpp">
+#include <stdio.h>
+
+int main(void) {
+    int n = 4;
+    int a[4];
+    int i;
+    for (i = 0; i < n; i++) {
+        scanf("%d", &a[i]);
+    }
+    printf("obratno: ");
+    for (i = n - 1; i >= 0; i--) {
+        printf("%d ", a[i]);
+    }
+    printf("\n");
+    return 0;
+}
+</script>
+<script type="application/json">{"stdout": "1 3 5 7\nobratno: 7 5 3 1 "}</script>
+</div>
+</section>
+
+<section class="lesson" id="s2" data-num="2" data-title="Сумма, среднее, min/max">
+<div class="cpp" data-title="Сумма и среднее" data-desc="Накопление в sum.">
+<script type="text/cpp">
+#include <stdio.h>
+
+int main(void) {
+    int a[5] = {2, 4, 6, 8, 10};
+    int sum = 0;
+    int i;
+    for (i = 0; i < 5; i++) sum += a[i];
+    double avg = sum / 5.0;
+    printf("sum=%d avg=%g\n", sum, avg);
+    return 0;
+}
+</script>
+<script type="application/json">{"stdout": "sum=30 avg=6"}</script>
+</div>
+
+<div class="cpp" data-title="Минимум и максимум" data-desc="Инициализируем первым элементом.">
+<script type="text/cpp">
+#include <stdio.h>
+
+int main(void) {
+    int a[6] = {3, 9, 2, 15, 7, 4};
+    int mn = a[0], mx = a[0];
+    int i;
+    for (i = 1; i < 6; i++) {
+        if (a[i] < mn) mn = a[i];
+        if (a[i] > mx) mx = a[i];
+    }
+    printf("min=%d max=%d\n", mn, mx);
+    return 0;
+}
+</script>
+<script type="application/json">{"stdout": "min=2 max=15"}</script>
+</div>
+</section>
+
+<section class="lesson" id="s3" data-num="3" data-title="Поиск элемента">
+<div class="cpp" data-title="Линейный поиск" data-desc="Ищем значение key, запоминаем индекс или -1.">
+<script type="text/cpp">
+#include <stdio.h>
+
+int main(void) {
+    int a[5] = {4, 8, 15, 16, 23};
+    int key = 15;
+    int pos = -1;
+    int i;
+    for (i = 0; i < 5; i++) {
+        if (a[i] == key) { pos = i; break; }
+    }
+    if (pos == -1) printf("ne najdeno\n");
+    else printf("index = %d\n", pos);
+    return 0;
+}
+</script>
+<script type="application/json">{"stdout": "index = 2"}</script>
+</div>
+</section>
+
+<section class="lesson" id="s4" data-num="4" data-title="Копирование и сдвиг (идея)">
+<script type="text/markdown">
+Скопировать массив: цикл `b[i] = a[i]`.  
+«Сдвинуть влево» — тоже цикл по индексам. Главное — не перепутать направление, чтобы не затереть данные.
+</script>
+</section>
+
+<section class="lesson" id="s5" data-num="5" data-title="Самопроверка">
+<script type="text/markdown">
+Сначала ответьте сами, затем откройте правильный ответ.
+</script>
+<details class="qa"><summary>1. Какой индекс у последнего элемента массива размера n?</summary><div class="qa-a">n-1.</div></details>
+<details class="qa"><summary>2. Как правильно инициализировать min при поиске минимума?</summary><div class="qa-a">Обычно <code>min = a[0]</code>, затем цикл с i=1.</div></details>
+<details class="qa"><summary>3. Что будет при обращении a[n] для массива int a[n]?</summary><div class="qa-a">Выход за границу — неопределённое поведение.</div></details>
+</section>
+
+            <footer class="page-foot">
+                <p>Вывод в примерах <strong>симулирован</strong> (типичный результат). Скопируйте код (.c) и проверьте в Visual Studio, Code::Blocks или на onlinegdb.com (язык C).</p>
+            </footer>
+        </main>
+    </div>
+    <button class="icon-btn to-top" type="button" aria-label="Наверх">↑</button>
+    <script src="../../assets/lesson.js"></script>
+    <script src="../../assets/course-nav.js"></script>
+</body>
+</html>

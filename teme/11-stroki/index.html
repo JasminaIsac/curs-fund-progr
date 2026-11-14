@@ -1,0 +1,187 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Обработка строк — FP.curs</title>
+    <meta name="description" content="C-строки: char[], \0, strlen, strcpy, strcmp, обход и поиск.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="../../assets/lesson.css">
+    <link rel="stylesheet" href="../../assets/course-nav.css">
+</head>
+<body>
+    <header class="topbar">
+        <button class="icon-btn menu-btn" id="menu" type="button" aria-label="Список тем курса" aria-expanded="false">☰</button>
+        <a class="brand" href="../../index.html">
+            <span class="brand-mark">FP<span>.</span>curs</span>
+            <span class="brand-sub">Тема 11 · C</span>
+        </a>
+        <div class="topbar-actions">
+            <button class="icon-btn" id="theme" type="button">Тема: auto</button>
+        </div>
+        <span class="progress" aria-hidden="true"></span>
+    </header>
+    <button type="button" class="nav-backdrop" id="nav-backdrop" aria-label="Закрыть меню" aria-hidden="true"></button>
+    <div class="layout">
+        <aside class="sidebar" id="sidebar" aria-label="Темы курса">
+            <div class="search">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7" cy="7" r="5"/><path d="m11 11 3.5 3.5"/></svg>
+                <input id="search" type="search" placeholder="Поиск темы…" aria-label="Поиск темы">
+            </div>
+            <ol class="toc" id="toc"></ol>
+            <p class="toc-empty" id="toc-empty" hidden>Ничего не найдено.</p>
+        </aside>
+        <main class="content" id="top">
+            <div class="hero">
+                <span class="kicker">Основы программирования · тема 11</span>
+                <h1>Обработка строк</h1>
+                <p>В C строка — массив символов с нулевым завершителем. Разберём объявление, длину, копирование, сравнение и типовые задачи.</p>
+                <div class="hero-stats">
+                    <span class="chip"><b id="stat-sections">0</b> разделов</span>
+                    <span class="chip"><b id="stat-demos">0</b> примеров C</span>
+                    <span class="chip"><b id="stat-qa">0</b> вопросов</span>
+                </div>
+            </div>
+<section class="lesson" id="s0" data-num="0" data-title="Что такое C-строка">
+<script type="text/markdown">
+```c
+char s[] = "cat"; /* символы: 'c' 'a' 't' '\0' */
+```
+
+В конце невидимый `\0` (нуль-терминатор). Без него функции из `<string.h>` «не знают», где конец.
+
+| Заголовок | Зачем |
+|---|---|
+| `<stdio.h>` | `printf`, `scanf` (`%s`) |
+| `<string.h>` | `strlen`, `strcpy`, `strcmp`, `strstr`… |
+
+> [!WARN]
+> Массив должен быть **достаточно большим**, чтобы вместить символы **и** `\0`. Иначе — переполнение буфера.
+</script>
+</section>
+
+<section class="lesson" id="s1" data-num="1" data-title="Длина, копирование, сравнение">
+<div class="cpp" data-title="strlen и печать" data-desc="Длина без учёта \0.">
+<script type="text/cpp">
+#include <stdio.h>
+#include <string.h>
+
+int main(void) {
+    char a[] = "Hello";
+    char b[] = "world";
+    printf("%s, %s!\n", a, b);
+    printf("len(a)=%zu\n", strlen(a));
+    return 0;
+}
+</script>
+<script type="application/json">{"stdout": "Hello, world!\nlen(a)=5"}</script>
+</div>
+
+<div class="cpp" data-title="strcpy и strcmp" data-desc="Копирование и лексикографическое сравнение.">
+<script type="text/cpp">
+#include <stdio.h>
+#include <string.h>
+
+int main(void) {
+    char x[32];
+    char y[] = "apricot";
+    strcpy(x, "apple");
+    if (strcmp(x, y) < 0) printf("%s < %s\n", x, y);
+    if (strcmp(x, "apple") == 0) printf("x is apple\n");
+    return 0;
+}
+</script>
+<script type="application/json">{"stdout": "apple < apricot\nx is apple"}</script>
+</div>
+</section>
+
+<section class="lesson" id="s2" data-num="2" data-title="Обход и подсчёт">
+<div class="cpp" data-title="Сколько гласных" data-desc="Простой подсчёт символов.">
+<script type="text/cpp">
+#include <stdio.h>
+#include <string.h>
+
+int main(void) {
+    char s[] = "Programming";
+    int vowels = 0;
+    int i;
+    for (i = 0; s[i] != '\0'; i++) {
+        char ch = s[i];
+        if (ch=='a'||ch=='e'||ch=='i'||ch=='o'||ch=='u'||
+            ch=='A'||ch=='E'||ch=='I'||ch=='O'||ch=='U') {
+            vowels++;
+        }
+    }
+    printf("vowels=%d\n", vowels);
+    return 0;
+}
+</script>
+<script type="application/json">{"stdout": "vowels=3"}</script>
+</div>
+
+<div class="cpp" data-title="Замена символов" data-desc="Все пробелы → _">
+<script type="text/cpp">
+#include <stdio.h>
+
+int main(void) {
+    char s[] = "a b c d";
+    int i;
+    for (i = 0; s[i] != '\0'; i++) {
+        if (s[i] == ' ') s[i] = '_';
+    }
+    printf("%s\n", s);
+    return 0;
+}
+</script>
+<script type="application/json">{"stdout": "a_b_c_d"}</script>
+</div>
+</section>
+
+<section class="lesson" id="s3" data-num="3" data-title="Поиск подстроки">
+<div class="cpp" data-title="strstr" data-desc="NULL значит «не найдено».">
+<script type="text/cpp">
+#include <stdio.h>
+#include <string.h>
+
+int main(void) {
+    char s[] = "abracadabra";
+    char *p = strstr(s, "cad");
+    if (p == NULL) printf("no\n");
+    else printf("pos=%ld\n", (long)(p - s));
+    return 0;
+}
+</script>
+<script type="application/json">{"stdout": "pos=4"}</script>
+</div>
+</section>
+
+<section class="lesson" id="s4" data-num="4" data-title="Ввод строк">
+<script type="text/markdown">
+- `scanf("%s", s)` читает **до пробела** (массив `s` уже объявлен);
+- целую строку с пробелами — позже `fgets` (в лабах).
+
+Пока для упражнений достаточно `scanf("%s", s)` — **без** `&` перед массивом (имя массива уже адрес).
+</script>
+</section>
+
+<section class="lesson" id="s5" data-num="5" data-title="Самопроверка">
+<script type="text/markdown">
+Сначала ответьте сами, затем откройте правильный ответ.
+</script>
+<details class="qa"><summary>1. Какой заголовок нужен для strlen/strcpy?</summary><div class="qa-a"><code>#include &lt;string.h&gt;</code></div></details>
+<details class="qa"><summary>2. Чем заканчивается C-строка?</summary><div class="qa-a">Нулевым символом <code>\0</code>.</div></details>
+<details class="qa"><summary>3. Что вернёт strstr, если подстроки нет?</summary><div class="qa-a"><code>NULL</code>.</div></details>
+</section>
+
+            <footer class="page-foot">
+                <p>Вывод в примерах <strong>симулирован</strong> (типичный результат). Скопируйте код (.c) и проверьте в Visual Studio, Code::Blocks или на onlinegdb.com (язык C).</p>
+            </footer>
+        </main>
+    </div>
+    <button class="icon-btn to-top" type="button" aria-label="Наверх">↑</button>
+    <script src="../../assets/lesson.js"></script>
+    <script src="../../assets/course-nav.js"></script>
+</body>
+</html>

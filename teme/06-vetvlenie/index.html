@@ -1,0 +1,274 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Логика и ветвление — FP.curs</title>
+    <meta name="description" content="Сравнения, && || !, if-else, вложенность, switch.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="../../assets/lesson.css">
+    <link rel="stylesheet" href="../../assets/course-nav.css">
+</head>
+<body>
+    <header class="topbar">
+        <button class="icon-btn menu-btn" id="menu" type="button" aria-label="Список тем курса" aria-expanded="false">☰</button>
+        <a class="brand" href="../../index.html">
+            <span class="brand-mark">FP<span>.</span>curs</span>
+            <span class="brand-sub">Тема 06 · C</span>
+        </a>
+        <div class="topbar-actions">
+            <button class="icon-btn" id="theme" type="button">Тема: auto</button>
+        </div>
+        <span class="progress" aria-hidden="true"></span>
+    </header>
+    <button type="button" class="nav-backdrop" id="nav-backdrop" aria-label="Закрыть меню" aria-hidden="true"></button>
+    <div class="layout">
+        <aside class="sidebar" id="sidebar" aria-label="Темы курса">
+            <div class="search">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7" cy="7" r="5"/><path d="m11 11 3.5 3.5"/></svg>
+                <input id="search" type="search" placeholder="Поиск темы…" aria-label="Поиск темы">
+            </div>
+            <ol class="toc" id="toc"></ol>
+            <p class="toc-empty" id="toc-empty" hidden>Ничего не найдено.</p>
+        </aside>
+        <main class="content" id="top">
+            <div class="hero">
+                <span class="kicker">Основы программирования · тема 06</span>
+                <h1>Операторы отношения, логика и ветвление</h1>
+                <p>Программа выбирает путь: сравнения, логические связки, if/else и switch — с подробными примерами на C.</p>
+                <div class="hero-stats">
+                    <span class="chip"><b id="stat-sections">0</b> разделов</span>
+                    <span class="chip"><b id="stat-demos">0</b> примеров C</span>
+                    <span class="chip"><b id="stat-qa">0</b> вопросов</span>
+                </div>
+            </div>
+<section class="lesson" id="s0" data-num="0" data-title="Условия">
+<script type="text/markdown">
+Условие — выражение, которое даёт «истину» или «ложь» (в C часто как `int`: ненулевое = истина).
+
+### Сравнение
+
+| Оп. | Смысл |
+|---|---|
+| `==` `!=` | равно / не равно |
+| `<` `>` `<=` `>=` | меньше / больше / … |
+
+### Логика
+
+| Оп. | Смысл | Пример |
+|---|---|---|
+| `&&` | И | `x > 0 && x < 10` |
+| `||` | ИЛИ | `c=='y' || c=='Y'` |
+| `!` | НЕ | `!(x == 0)` |
+
+> [!WARN]
+> `=` присваивает, `==` сравнивает. Ошибка `if (x = 1)` часто компилируется и всегда «истинна» после присваивания 1.
+</script>
+
+<div class="cpp" data-title="Логические выражения" data-desc="Печатаем 1/0 как результат сравнений.">
+<script type="text/cpp">
+#include <stdio.h>
+
+int main(void) {
+    int x = 7;
+    printf("%d\n", x > 5);            /* 1 */
+    printf("%d\n", x > 5 && x < 10);  /* 1 */
+    printf("%d\n", x < 0 || x > 100); /* 0 */
+    printf("%d\n", !(x == 7));        /* 0 */
+    return 0;
+}
+</script>
+<script type="application/json">{"stdout": "1\n1\n0\n0"}</script>
+</div>
+</section>
+
+<section class="lesson" id="s1" data-num="1" data-title="if / else / else if">
+<script type="text/markdown">
+### Что такое `if`?
+
+`if` (англ. *если*) — оператор **ветвления**: программа проверяет условие и выбирает, какой код выполнить.
+
+| Слово | Смысл |
+|---|---|
+| `if (условие)` | **если** условие истинно — выполнить блок в `{ }` |
+| `else` | **иначе** — выполнить, когда `if` не сработал |
+| `else if (…)` | **иначе если** — следующая проверка, когда предыдущие не подошли |
+
+Без `if` программа всегда идёт **прямо** сверху вниз. С `if` появляется развилка: «пойти сюда или туда».
+
+**Пример из жизни:** *если* оценка ≥ 50 — зачёт, *иначе* — незачёт.
+
+### Как читается конструкция
+
+1. Сначала смотрим на `if (условие1)` — правда? → делаем ветку 1 и **выходим** из всей цепочки.
+2. Если нет — проверяем `else if (условие2)` — правда? → ветка 2.
+3. Если ни одно условие не подошло — выполняется `else` (если он есть).
+
+Условие в скобках — это выражение, которое даёт «истину» или «ложь» (в C: ненулевое = истина, `0` = ложь). Часто там сравнение: `x > 0`, `score >= 50`, `n % 2 == 0`.
+
+```c
+if (условие1) {
+    /* ветка 1 — только если условие1 истинно */
+} else if (условие2) {
+    /* ветка 2 — если условие1 ложно, а условие2 истинно */
+} else {
+    /* иначе — ни одно условие выше не сработало */
+}
+```
+
+Можно писать и короткий вариант — только `if`, без `else`:
+
+```c
+if (x < 0) {
+    x = -x;   /* сделать число неотрицательным */
+}
+/* дальше программа идёт всегда */
+```
+
+> [!TIP]
+> Фигурные скобки `{}` ставьте даже для одного оператора — так меньше ошибок, особенно когда позже добавите ещё строки.
+</script>
+
+<div class="cpp" data-title="Знак числа" data-desc="Три ветки.">
+<script type="text/cpp">
+#include <stdio.h>
+
+int main(void) {
+    int x = -3;
+    if (x > 0) {
+        printf("polozhitelnoe\n");
+    } else if (x < 0) {
+        printf("otritsatelnoe\n");
+    } else {
+        printf("nol\n");
+    }
+    return 0;
+}
+</script>
+<script type="application/json">{"stdout": "otritsatelnoe"}</script>
+</div>
+
+<div class="cpp" data-title="Допуск по баллу" data-desc="Комбинация сравнений.">
+<script type="text/cpp">
+#include <stdio.h>
+
+int main(void) {
+    int score = 75;
+    if (score >= 50 && score <= 100) {
+        printf("zachet\n");
+    } else if (score > 100 || score < 0) {
+        printf("oshibka vvoda\n");
+    } else {
+        printf("nezachet\n");
+    }
+    return 0;
+}
+</script>
+<script type="application/json">{"stdout": "zachet"}</script>
+</div>
+</section>
+
+<section class="lesson" id="s2" data-num="2" data-title="Вложенный if">
+<script type="text/markdown">
+Внутри ветки может быть ещё один `if`. Не увлекайтесь глубиной — читаемость падает. Иногда лучше `else if` или `switch`.
+</script>
+
+<div class="cpp" data-title="Вложенность: чётное и больше 10" data-desc="Два уровня проверки.">
+<script type="text/cpp">
+#include <stdio.h>
+
+int main(void) {
+    int n = 14;
+    if (n % 2 == 0) {
+        if (n > 10) {
+            printf("chetnoye i > 10\n");
+        } else {
+            printf("chetnoye no <= 10\n");
+        }
+    } else {
+        printf("nechetnoye\n");
+    }
+    return 0;
+}
+</script>
+<script type="application/json">{"stdout": "chetnoye i > 10"}</script>
+</div>
+</section>
+
+<section class="lesson" id="s3" data-num="3" data-title="switch">
+<script type="text/markdown">
+Удобен при выборе из **нескольких констант** одного целого/`char` выражения.
+
+Обязательно думайте о `break`. Без него выполнение выполнит следующие `case` подряд (*fall-through*).
+</script>
+
+<div class="cpp" data-title="Калькулятор на switch" data-desc="Операция задана символом.">
+<script type="text/cpp">
+#include <stdio.h>
+
+int main(void) {
+    double a = 10, b = 4;
+    char op = '*';
+    switch (op) {
+        case '+': printf("%g", a + b); break;
+        case '-': printf("%g", a - b); break;
+        case '*': printf("%g", a * b); break;
+        case '/':
+            if (b != 0) printf("%g", a / b);
+            else printf("div0");
+            break;
+        default: printf("unknown");
+    }
+    printf("\n");
+    return 0;
+}
+</script>
+<script type="application/json">{"stdout": "40"}</script>
+</div>
+
+<div class="cpp" data-title="День недели (числа 1..7)" data-desc="default ловит неверный ввод.">
+<script type="text/cpp">
+#include <stdio.h>
+
+int main(void) {
+    int d = 6;
+    switch (d) {
+        case 1: printf("Mon"); break;
+        case 2: printf("Tue"); break;
+        case 3: printf("Wed"); break;
+        case 4: printf("Thu"); break;
+        case 5: printf("Fri"); break;
+        case 6: printf("Sat"); break;
+        case 7: printf("Sun"); break;
+        default: printf("bad day");
+    }
+    printf("\n");
+    return 0;
+}
+</script>
+<script type="application/json">{"stdout": "Sat"}</script>
+</div>
+</section>
+
+<section class="lesson" id="s4" data-num="4" data-title="Самопроверка">
+<script type="text/markdown">
+Сначала ответьте сами, затем откройте правильный ответ.
+</script>
+<details class="qa"><summary>1. Чем <code>&&</code> отличается от <code>||</code>?</summary><div class="qa-a">И требует оба истинных; ИЛИ — хотя бы один.</div></details>
+<details class="qa"><summary>2. Почему опасен <code>if (x = 1)</code>?</summary><div class="qa-a">Это присваивание, не сравнение; условие обычно становится истинным.</div></details>
+<details class="qa"><summary>3. Зачем <code>break</code> в switch?</summary><div class="qa-a">Чтобы не выполнять следующие case.</div></details>
+<details class="qa"><summary>4. Когда switch удобнее длинной цепочки if?</summary><div class="qa-a">Когда ветвление идёт по одному дискретному значению среди констант.</div></details>
+</section>
+
+            <footer class="page-foot">
+                <p>Вывод в примерах <strong>симулирован</strong> (типичный результат). Скопируйте код (.c) и проверьте в Visual Studio, Code::Blocks или на onlinegdb.com (язык C).</p>
+            </footer>
+        </main>
+    </div>
+    <button class="icon-btn to-top" type="button" aria-label="Наверх">↑</button>
+    <script src="../../assets/lesson.js"></script>
+    <script src="../../assets/course-nav.js"></script>
+</body>
+</html>

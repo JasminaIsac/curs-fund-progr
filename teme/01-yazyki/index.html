@@ -1,0 +1,228 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Языки программирования среднего уровня — FP.curs</title>
+    <meta name="description" content="Классификация по уровню, конвейер компиляции, первая программа на C.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="../../assets/lesson.css">
+    <link rel="stylesheet" href="../../assets/course-nav.css">
+</head>
+<body>
+    <header class="topbar">
+        <button class="icon-btn menu-btn" id="menu" type="button" aria-label="Список тем курса" aria-expanded="false">☰</button>
+        <a class="brand" href="../../index.html">
+            <span class="brand-mark">FP<span>.</span>curs</span>
+            <span class="brand-sub">Тема 01 · C</span>
+        </a>
+        <div class="topbar-actions">
+            <button class="icon-btn" id="theme" type="button">Тема: auto</button>
+        </div>
+        <span class="progress" aria-hidden="true"></span>
+    </header>
+    <button type="button" class="nav-backdrop" id="nav-backdrop" aria-label="Закрыть меню" aria-hidden="true"></button>
+    <div class="layout">
+        <aside class="sidebar" id="sidebar" aria-label="Темы курса">
+            <div class="search">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7" cy="7" r="5"/><path d="m11 11 3.5 3.5"/></svg>
+                <input id="search" type="search" placeholder="Поиск темы…" aria-label="Поиск темы">
+            </div>
+            <ol class="toc" id="toc"></ol>
+            <p class="toc-empty" id="toc-empty" hidden>Ничего не найдено.</p>
+        </aside>
+        <main class="content" id="top">
+            <div class="hero">
+                <span class="kicker">Основы программирования · тема 01</span>
+                <h1>Языки программирования среднего уровня</h1>
+                <p>Разберём, по какому критерию делят языки на высокий/средний/низкий уровень, чем C отличается от ассемблера и Python, и как текст программы превращается в исполняемый файл.</p>
+                <div class="hero-stats">
+                    <span class="chip"><b id="stat-sections">0</b> разделов</span>
+                    <span class="chip"><b id="stat-demos">0</b> примеров C</span>
+                    <span class="chip"><b id="stat-qa">0</b> вопросов</span>
+                </div>
+            </div>
+<section class="lesson" id="s0" data-num="0" data-title="Цели темы">
+<script type="text/markdown">
+### Чему научимся
+
+1. Понять **классификацию языков по уровню** — что это за деление и **по какому признаку**.
+2. Увидеть, где стоит **C** среди других языков.
+3. Собрать и объяснить каркас `main`, `#include`, `printf`.
+4. Пройти **конвейер**: исходный текст → компиляция → запуск.
+</script>
+</section>
+
+<section class="lesson" id="s1" data-num="1" data-title="Классификация языков">
+<script type="text/markdown">
+### Какая это классификация?
+
+Это **классификация языков программирования по уровню абстракции**  
+(часто говорят: «языки высокого / среднего / низкого уровня»).
+
+### По какому критерию делят?
+
+Критерий — **насколько язык близок к машине**, а насколько — к человеку и задаче:
+
+| Ближе к… | Вопрос | Следствие |
+|---|---|---|
+| **аппаратуре** (процессор, регистры, адреса) | «Какую команду выполнить?» | больше контроля, труднее писать |
+| **человеку и задаче** | «Что нужно получить?» | быстрее писать, меньше ручного контроля |
+
+Чем **ниже** уровень — тем подробнее вы «говорите» железу.  
+Чем **выше** — тем больше деталей (память, регистры) скрывает язык/рантайм.
+
+> [!INFO]
+> Есть и **другие** классификации (по парадигме: императивные / ООП / функциональные; по типу исполнения: компилируемые / интерпретируемые). Здесь — именно **по уровню**.
+
+### Таблица уровней
+
+| Уровень | Примеры | Вы ближе к… | Плюс | Минус |
+|---|---|---|---|---|
+| Высокий | Python, JavaScript, Java | задаче человека | быстро писать | меньше прямого контроля над памятью |
+| **Средний** | **C** (и C++) | и задаче, и машине | скорость + контроль | нужно следить за типами и памятью |
+| Низкий | ассемблер | командам процессора | максимум контроля | трудно и долго писать |
+
+**Аналогия:** ассемблер — «по проводам» с процессором; Python — через удобный переводчик; **C** — язык, который и человек читает, и машина выполняет эффективно.
+
+### Зачем учить C на «Основах»
+
+- понимаете, **как данные лежат в памяти**;
+- учитесь точным типам (`int`, `double`…);
+- готовитесь к алгоритмам, структурам данных, системному стилю;
+- C — основа многих систем, встраиваемых программ, ОС и «родитель» синтаксиса для C++/Java.
+</script>
+</section>
+
+<section class="lesson" id="s2" data-num="2" data-title="Язык C на этом курсе">
+<script type="text/markdown">
+### Кратко о C
+
+- **C** (1970-е) — процедурный язык: функции, типы, указатели, близко к ОС.
+- Синтаксис простой и строгий: всё явно — типы, память, вызовы.
+
+В **этом курсе** пишем учебный **C**:
+
+- заголовок `<stdio.h>` (ввод-вывод), иногда `<string.h>`, `<stdbool.h>`;
+- функции `printf` / `scanf`;
+- функции, массивы, циклы — без ООП.
+
+> [!INFO]
+> Файл обычно называют `main.c`. Расширение `.cpp` — для C++; мы работаем с **`.c`**.
+</script>
+</section>
+
+<section class="lesson" id="s3" data-num="3" data-title="От текста до программы">
+<script type="text/markdown">
+### Конвейер — что происходит по шагам
+
+```text
+1) вы пишете main.c
+2) препроцессор   — подставляет #include, макросы
+3) компилятор     — проверяет синтаксис, переводит в объектный код (.o / .obj)
+4) компоновщик    — склеивает с библиотеками (printf и др.) → .exe / a.out
+5) ОС загружает файл в память и передаёт управление в main
+6) программа печатает результат / читает ввод
+```
+
+**Подробнее по этапам:**
+
+1. **Исходный текст** — обычный файл с кодом на C. Пока это только текст для человека и компилятора.
+2. **Препроцессор** — обрабатывает строки вида `#include <stdio.h>`: подставляет объявления нужных функций (`printf`, `scanf`…).
+3. **Компиляция** — перевод на язык машины (или промежуточный объектный файл). Здесь ловятся **синтаксические** ошибки (забыли `;`, опечатка в имени).
+4. **Компоновка (linking)** — связывание вашего кода с готовыми библиотеками. Без этого «вызов printf» не знал бы, *где* лежит сама функция.
+5. **Запуск** — ОС создаёт процесс, загружает программу, вызывает `main`. Возврат `return 0;` обычно значит «успешно».
+
+Ошибки бывают трёх видов:
+
+1. **синтаксические** — компилятор не понял запись (забыли `;`);
+2. **логические** — программа собралась, но считает не то;
+3. **времени выполнения** — падение при работе (деление на 0, выход за массив…).
+
+Пока достаточно: «красная ошибка компилятора» = исправьте строку, на которую он указывает.
+</script>
+</section>
+
+<section class="lesson" id="s4" data-num="4" data-title="Разбор Hello, world">
+<script type="text/markdown">
+### Построчно
+
+```c
+#include <stdio.h>   /* библиотека ввода-вывода */
+
+int main(void) {     /* точка входа */
+    printf("Privet!");
+    return 0;        /* 0 = программа завершилась успешно */
+}
+```
+
+| Фрагмент | Зачем |
+|---|---|
+| `#include <stdio.h>` | подключить `printf` / `scanf` |
+| `main` | с неё начинается выполнение |
+| `printf(...)` | вывод в консоль |
+| `return 0` | код возврата ОС |
+</script>
+
+<div class="cpp" data-title="Первая программа" data-desc="Запустите, затем скопируйте в IDE и соберите сами (.c).">
+<script type="text/cpp">
+#include <stdio.h>
+
+int main(void) {
+    printf("Privet, C!\n");
+    printf("Eto moya pervaya programma.\n");
+    return 0;
+}
+</script>
+<script type="application/json">{"stdout": "Privet, C!\nEto moya pervaya programma."}</script>
+</div>
+
+<div class="cpp" data-title="Несколько сообщений и выражение" data-desc="printf умеет печатать и текст, и числа через спецификаторы.">
+<script type="text/cpp">
+#include <stdio.h>
+
+int main(void) {
+    printf("2 + 2 = %d\n", 2 + 2);
+    printf("Kurs: Osnovy programmirovaniya\n");
+    return 0;
+}
+</script>
+<script type="application/json">{"stdout": "2 + 2 = 4\nKurs: Osnovy programmirovaniya"}</script>
+</div>
+</section>
+
+<section class="lesson" id="s5" data-num="5" data-title="Типичные ошибки новичка">
+<script type="text/markdown">
+| Ошибка | Пример | Как чинить |
+|---|---|---|
+| Нет точки с запятой | `printf("1")` | добавить `;` |
+| Забыли `#include` | нет `stdio.h` | подключить заголовок |
+| Не та кавычка | `«текст»` | только `"..."` |
+| `Main` с большой буквы | | должно быть `main` |
+| Забыли `\n` в printf | текст слипается | добавить `\n` при необходимости |
+| Русские буквы в имени файла/путях | иногда ломает сборку | латиница в учебных проектах |
+</script>
+</section>
+
+<section class="lesson" id="s6" data-num="6" data-title="Самопроверка">
+<script type="text/markdown">
+Сначала ответьте сами, затем откройте правильный ответ.
+</script>
+<details class="qa"><summary>1. По какому критерию делят языки на высокий/средний/низкий уровень?</summary><div class="qa-a">По уровню абстракции: насколько язык близок к машине или к человеку/задаче.</div></details>
+<details class="qa"><summary>2. С чего начинается выполнение программы на C?</summary><div class="qa-a">С функции <code>main</code>.</div></details>
+<details class="qa"><summary>3. Что делает <code>#include &lt;stdio.h&gt;</code>?</summary><div class="qa-a">Подключает объявления функций ввода-вывода (<code>printf</code>, <code>scanf</code> и др.).</div></details>
+<details class="qa"><summary>4. Чем этап компоновки отличается от компиляции?</summary><div class="qa-a">Компиляция переводит ваш код; компоновка связывает его с библиотеками в готовый исполняемый файл.</div></details>
+</section>
+
+            <footer class="page-foot">
+                <p>Вывод в примерах <strong>симулирован</strong> (типичный результат). Скопируйте код (.c) и проверьте в Visual Studio, Code::Blocks или на onlinegdb.com (язык C).</p>
+            </footer>
+        </main>
+    </div>
+    <button class="icon-btn to-top" type="button" aria-label="Наверх">↑</button>
+    <script src="../../assets/lesson.js"></script>
+    <script src="../../assets/course-nav.js"></script>
+</body>
+</html>

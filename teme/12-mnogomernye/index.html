@@ -1,0 +1,193 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Многомерные массивы — FP.curs</title>
+    <meta name="description" content="Матрицы, ввод/вывод, сумма, главная диагональ, поиск.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="../../assets/lesson.css">
+    <link rel="stylesheet" href="../../assets/course-nav.css">
+</head>
+<body>
+    <header class="topbar">
+        <button class="icon-btn menu-btn" id="menu" type="button" aria-label="Список тем курса" aria-expanded="false">☰</button>
+        <a class="brand" href="../../index.html">
+            <span class="brand-mark">FP<span>.</span>curs</span>
+            <span class="brand-sub">Тема 12 · C</span>
+        </a>
+        <div class="topbar-actions">
+            <button class="icon-btn" id="theme" type="button">Тема: auto</button>
+        </div>
+        <span class="progress" aria-hidden="true"></span>
+    </header>
+    <button type="button" class="nav-backdrop" id="nav-backdrop" aria-label="Закрыть меню" aria-hidden="true"></button>
+    <div class="layout">
+        <aside class="sidebar" id="sidebar" aria-label="Темы курса">
+            <div class="search">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7" cy="7" r="5"/><path d="m11 11 3.5 3.5"/></svg>
+                <input id="search" type="search" placeholder="Поиск темы…" aria-label="Поиск темы">
+            </div>
+            <ol class="toc" id="toc"></ol>
+            <p class="toc-empty" id="toc-empty" hidden>Ничего не найдено.</p>
+        </aside>
+        <main class="content" id="top">
+            <div class="hero">
+                <span class="kicker">Основы программирования · тема 12</span>
+                <h1>Многомерные массивы</h1>
+                <p>Двумерный массив — таблица. Научимся обходить строки/столбцы и решать типовые задачи на C.</p>
+                <div class="hero-stats">
+                    <span class="chip"><b id="stat-sections">0</b> разделов</span>
+                    <span class="chip"><b id="stat-demos">0</b> примеров C</span>
+                    <span class="chip"><b id="stat-qa">0</b> вопросов</span>
+                </div>
+            </div>
+<section class="lesson" id="s0" data-num="0" data-title="Объявление матрицы">
+<script type="text/markdown">
+```c
+#define N 2
+#define M 3
+int a[N][M] = {
+    {1, 2, 3},
+    {4, 5, 6}
+};
+```
+
+Индексация: `a[строка][столбец]`, оба с нуля.
+
+**Память:** строки лежат подряд (row-major): 1 2 3 4 5 6.
+</script>
+</section>
+
+<section class="lesson" id="s1" data-num="1" data-title="Печать и сумма">
+<div class="cpp" data-title="Печать матрицы" data-desc="Два вложенных for.">
+<script type="text/cpp">
+#include <stdio.h>
+
+int main(void) {
+    int a[2][3] = {{1,2,3},{4,5,6}};
+    int i, j;
+    for (i = 0; i < 2; i++) {
+        for (j = 0; j < 3; j++) {
+            printf("%d ", a[i][j]);
+        }
+        printf("\n");
+    }
+    return 0;
+}
+</script>
+<script type="application/json">{"stdout": "1 2 3 \n4 5 6 "}</script>
+</div>
+
+<div class="cpp" data-title="Сумма всех элементов" data-desc="Накопитель sum.">
+<script type="text/cpp">
+#include <stdio.h>
+
+int main(void) {
+    int a[2][3] = {{1,2,3},{4,5,6}};
+    int sum = 0;
+    int i, j;
+    for (i = 0; i < 2; i++)
+        for (j = 0; j < 3; j++)
+            sum += a[i][j];
+    printf("sum=%d\n", sum);
+    return 0;
+}
+</script>
+<script type="application/json">{"stdout": "sum=21"}</script>
+</div>
+</section>
+
+<section class="lesson" id="s2" data-num="2" data-title="Суммы по строкам и столбцам">
+<div class="cpp" data-title="Сумма каждой строки" data-desc="Внутренний цикл суммирует строку i.">
+<script type="text/cpp">
+#include <stdio.h>
+
+int main(void) {
+    int a[3][3] = {
+        {1,1,1},
+        {2,2,2},
+        {3,3,3}
+    };
+    int i, j;
+    for (i = 0; i < 3; i++) {
+        int row = 0;
+        for (j = 0; j < 3; j++) row += a[i][j];
+        printf("row %d = %d\n", i, row);
+    }
+    return 0;
+}
+</script>
+<script type="application/json">{"stdout": "row 0 = 3\nrow 1 = 6\nrow 2 = 9"}</script>
+</div>
+</section>
+
+<section class="lesson" id="s3" data-num="3" data-title="Диагональ (квадратная)">
+<div class="cpp" data-title="Главная диагональ" data-desc="Элементы a[i][i].">
+<script type="text/cpp">
+#include <stdio.h>
+
+int main(void) {
+    int a[3][3] = {
+        {1, 0, 0},
+        {0, 5, 0},
+        {0, 0, 9}
+    };
+    int i;
+    for (i = 0; i < 3; i++) {
+        printf("%d ", a[i][i]);
+    }
+    printf("\n");
+    return 0;
+}
+</script>
+<script type="application/json">{"stdout": "1 5 9 "}</script>
+</div>
+</section>
+
+<section class="lesson" id="s4" data-num="4" data-title="Поиск максимума в матрице">
+<div class="cpp" data-title="Max и его индексы" data-desc="Запоминаем значение и пару (i,j).">
+<script type="text/cpp">
+#include <stdio.h>
+
+int main(void) {
+    int a[2][3] = {{1,8,3},{4,2,7}};
+    int mx = a[0][0], bi = 0, bj = 0;
+    int i, j;
+    for (i = 0; i < 2; i++) {
+        for (j = 0; j < 3; j++) {
+            if (a[i][j] > mx) {
+                mx = a[i][j];
+                bi = i; bj = j;
+            }
+        }
+    }
+    printf("max=%d at [%d][%d]\n", mx, bi, bj);
+    return 0;
+}
+</script>
+<script type="application/json">{"stdout": "max=8 at [0][1]"}</script>
+</div>
+</section>
+
+<section class="lesson" id="s5" data-num="5" data-title="Самопроверка">
+<script type="text/markdown">
+Сначала ответьте сами, затем откройте правильный ответ.
+</script>
+<details class="qa"><summary>1. Что такое a[i][j]?</summary><div class="qa-a">Элемент строки i и столбца j.</div></details>
+<details class="qa"><summary>2. Сколько циклов обычно нужно, чтобы обойти всю матрицу n×m?</summary><div class="qa-a">Два вложенных: по i и по j.</div></details>
+<details class="qa"><summary>3. Что на главной диагонали?</summary><div class="qa-a">Элементы с равными индексами a[i][i].</div></details>
+</section>
+
+            <footer class="page-foot">
+                <p>Вывод в примерах <strong>симулирован</strong> (типичный результат). Скопируйте код (.c) и проверьте в Visual Studio, Code::Blocks или на onlinegdb.com (язык C).</p>
+            </footer>
+        </main>
+    </div>
+    <button class="icon-btn to-top" type="button" aria-label="Наверх">↑</button>
+    <script src="../../assets/lesson.js"></script>
+    <script src="../../assets/course-nav.js"></script>
+</body>
+</html>

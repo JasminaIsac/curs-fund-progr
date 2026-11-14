@@ -1,0 +1,210 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Предопределённые типы данных — FP.curs</title>
+    <meta name="description" content="int, double, char, bool, sizeof, литералы, переполнение.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="../../assets/lesson.css">
+    <link rel="stylesheet" href="../../assets/course-nav.css">
+</head>
+<body>
+    <header class="topbar">
+        <button class="icon-btn menu-btn" id="menu" type="button" aria-label="Список тем курса" aria-expanded="false">☰</button>
+        <a class="brand" href="../../index.html">
+            <span class="brand-mark">FP<span>.</span>curs</span>
+            <span class="brand-sub">Тема 03 · C</span>
+        </a>
+        <div class="topbar-actions">
+            <button class="icon-btn" id="theme" type="button">Тема: auto</button>
+        </div>
+        <span class="progress" aria-hidden="true"></span>
+    </header>
+    <button type="button" class="nav-backdrop" id="nav-backdrop" aria-label="Закрыть меню" aria-hidden="true"></button>
+    <div class="layout">
+        <aside class="sidebar" id="sidebar" aria-label="Темы курса">
+            <div class="search">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7" cy="7" r="5"/><path d="m11 11 3.5 3.5"/></svg>
+                <input id="search" type="search" placeholder="Поиск темы…" aria-label="Поиск темы">
+            </div>
+            <ol class="toc" id="toc"></ol>
+            <p class="toc-empty" id="toc-empty" hidden>Ничего не найдено.</p>
+        </aside>
+        <main class="content" id="top">
+            <div class="hero">
+                <span class="kicker">Основы программирования · тема 03</span>
+                <h1>Предопределённые типы данных</h1>
+                <p>Тип говорит компилятору, сколько памяти занять и какие операции разрешены. Разберём типы подробно на C.</p>
+                <div class="hero-stats">
+                    <span class="chip"><b id="stat-sections">0</b> разделов</span>
+                    <span class="chip"><b id="stat-demos">0</b> примеров C</span>
+                    <span class="chip"><b id="stat-qa">0</b> вопросов</span>
+                </div>
+            </div>
+<section class="lesson" id="s0" data-num="0" data-title="Зачем типы">
+<script type="text/markdown">
+В математике «число» — абстракция. В C у каждого значения есть **тип**:
+
+- сколько **байт** занимает;
+- целые это или с дробью;
+- можно ли сравнивать / делить и т.д.
+
+```c
+int age = 19;
+double height = 1.75;
+char letter = 'A';
+int ok = 1;          /* часто 1/0 вместо bool */
+```
+
+Для `bool` в современном C: `#include <stdbool.h>` и `true` / `false`.
+
+Объявление: `тип имя;` или `тип имя = значение;`
+</script>
+</section>
+
+<section class="lesson" id="s1" data-num="1" data-title="Таблица основных типов">
+<script type="text/markdown">
+| Тип | Пример | Типичный размер* | Назначение |
+|---|---|---|---|
+| `int` | `42`, `-7` | 4 байта | целые |
+| `long long` | `10000000000LL` | 8 байт | большие целые |
+| `double` | `3.14` | 8 байт | вещественные |
+| `float` | `2.5f` | 4 байта | вещественные (меньше точность) |
+| `char` | `'x'` | 1 байт | символ |
+| `bool` | `true`/`false` | 1 байт | логика (`stdbool.h`) |
+| `unsigned int` | `0u`… | 4 байта | только ≥ 0 |
+
+\*на большинстве учебных ПК с 64-битным компилятором. Точный размер — через `sizeof`.
+</script>
+
+<div class="cpp" data-title="sizeof и печать размеров" data-desc="Посмотрите размеры типов.">
+<script type="text/cpp">
+#include <stdio.h>
+#include <stdbool.h>
+
+int main(void) {
+    printf("sizeof(int) = %zu\n", sizeof(int));
+    printf("sizeof(double) = %zu\n", sizeof(double));
+    printf("sizeof(char) = %zu\n", sizeof(char));
+    printf("sizeof(bool) = %zu\n", sizeof(bool));
+    printf("sizeof(long long) = %zu\n", sizeof(long long));
+    return 0;
+}
+</script>
+<script type="application/json">{"stdout": "sizeof(int) = 4\nsizeof(double) = 8\nsizeof(char) = 1\nsizeof(bool) = 1\nsizeof(long long) = 8"}</script>
+</div>
+</section>
+
+<section class="lesson" id="s2" data-num="2" data-title="Целые: деление и остаток">
+<script type="text/markdown">
+### Важнейшая ловушка
+
+Если **оба** операнда целые, `/` — **целочисленное** деление:
+
+- `7 / 2` → `3` (не 3.5!)
+- `7 % 2` → `1` (остаток)
+
+`%` только для целых.
+</script>
+
+<div class="cpp" data-title="Деление int vs double" data-desc="Переключайте варианты.">
+<script type="text/cpp">
+#include <stdio.h>
+int main(void) {
+    printf("%d\n", 7 / 2);
+    return 0;
+}
+</script>
+<script type="application/json">{"stdout": "3", "variants": [{"label": "7/2 int", "code": "#include <stdio.h>\nint main(void) {\n    printf(\"%d\\n\", 7 / 2);\n    return 0;\n}", "stdout": "3"}, {"label": "7%2", "code": "#include <stdio.h>\nint main(void) {\n    printf(\"%d\\n\", 7 % 2);\n    return 0;\n}", "stdout": "1"}, {"label": "7.0/2", "code": "#include <stdio.h>\nint main(void) {\n    printf(\"%g\\n\", 7.0 / 2);\n    return 0;\n}", "stdout": "3.5"}, {"label": "(double)7/2", "code": "#include <stdio.h>\nint main(void) {\n    printf(\"%g\\n\", (double)7 / 2);\n    return 0;\n}", "stdout": "3.5"}]}</script>
+</div>
+</section>
+
+<section class="lesson" id="s3" data-num="3" data-title="char и bool">
+<script type="text/markdown">
+### char
+
+Хранит код символа. Кавычки **одинарные**: `'A'`.
+
+```c
+char c = 'A';
+printf("%c", c);      /* A */
+printf("%d", (int)c); /* 65 */
+```
+
+### bool
+
+Через `<stdbool.h>`: `true` / `false`. В `printf` обычно печатают как `%d` → `1` и `0`.
+</script>
+
+<div class="cpp" data-title="char и bool" data-desc="Символ и логическое значение.">
+<script type="text/cpp">
+#include <stdio.h>
+#include <stdbool.h>
+
+int main(void) {
+    char c = 'A';
+    bool ok = true;
+    bool fail = false;
+    printf("char: %c\n", c);
+    printf("kod: %d\n", (int)c);
+    printf("ok=%d fail=%d\n", ok, fail);
+    return 0;
+}
+</script>
+<script type="application/json">{"stdout": "char: A\nkod: 65\nok=1 fail=0"}</script>
+</div>
+</section>
+
+<section class="lesson" id="s4" data-num="4" data-title="Константы и имена">
+<script type="text/markdown">
+```c
+const double PI = 3.14159; /* нельзя изменить потом */
+```
+
+Имена переменных: латиница, цифры, `_`; **не** начинать с цифры; регистр важен (`Sum` ≠ `sum`).
+</script>
+
+<div class="cpp" data-title="const и несколько переменных" data-desc="Объявление в одном стиле.">
+<script type="text/cpp">
+#include <stdio.h>
+
+int main(void) {
+    const int DAYS = 7;
+    int weeks = 3;
+    printf("dney = %d\n", DAYS * weeks);
+    return 0;
+}
+</script>
+<script type="application/json">{"stdout": "dney = 21"}</script>
+</div>
+</section>
+
+<section class="lesson" id="s5" data-num="5" data-title="Переполнение (идея)">
+<script type="text/markdown">
+У целого типа есть **максимум**. Если прибавлять слишком много, значение «перекрутится» (переполнение). На экзамене важно знать, что диапазон ограничен; для очень больших чисел берут `long long`.
+</script>
+</section>
+
+<section class="lesson" id="s6" data-num="6" data-title="Самопроверка">
+<script type="text/markdown">
+Сначала ответьте сами, затем откройте правильный ответ.
+</script>
+<details class="qa"><summary>1. Чему равно <code>9 / 2</code> в типе int?</summary><div class="qa-a">4.</div></details>
+<details class="qa"><summary>2. Как получить 4.5 при делении 9 на 2?</summary><div class="qa-a">Например <code>9.0/2</code> или <code>(double)9/2</code>.</div></details>
+<details class="qa"><summary>3. Чем <code>'A'</code> отличается от <code>"A"</code>?</summary><div class="qa-a">Одинарные — один <code>char</code>; двойные — строковый литерал (массив char с \0).</div></details>
+<details class="qa"><summary>4. Что делает <code>sizeof(x)</code>?</summary><div class="qa-a">Возвращает размер объекта/типа в байтах.</div></details>
+</section>
+
+            <footer class="page-foot">
+                <p>Вывод в примерах <strong>симулирован</strong> (типичный результат). Скопируйте код (.c) и проверьте в Visual Studio, Code::Blocks или на onlinegdb.com (язык C).</p>
+            </footer>
+        </main>
+    </div>
+    <button class="icon-btn to-top" type="button" aria-label="Наверх">↑</button>
+    <script src="../../assets/lesson.js"></script>
+    <script src="../../assets/course-nav.js"></script>
+</body>
+</html>

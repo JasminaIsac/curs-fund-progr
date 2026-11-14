@@ -1,0 +1,170 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Указатели — FP.curs</title>
+    <meta name="description" content="Адрес, *, &, NULL, связь с массивами — расширенный обзор на C.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="../../assets/lesson.css">
+    <link rel="stylesheet" href="../../assets/course-nav.css">
+</head>
+<body>
+    <header class="topbar">
+        <button class="icon-btn menu-btn" id="menu" type="button" aria-label="Список тем курса" aria-expanded="false">☰</button>
+        <a class="brand" href="../../index.html">
+            <span class="brand-mark">FP<span>.</span>curs</span>
+            <span class="brand-sub">Тема 09 · C</span>
+        </a>
+        <div class="topbar-actions">
+            <button class="icon-btn" id="theme" type="button">Тема: auto</button>
+        </div>
+        <span class="progress" aria-hidden="true"></span>
+    </header>
+    <button type="button" class="nav-backdrop" id="nav-backdrop" aria-label="Закрыть меню" aria-hidden="true"></button>
+    <div class="layout">
+        <aside class="sidebar" id="sidebar" aria-label="Темы курса">
+            <div class="search">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7" cy="7" r="5"/><path d="m11 11 3.5 3.5"/></svg>
+                <input id="search" type="search" placeholder="Поиск темы…" aria-label="Поиск темы">
+            </div>
+            <ol class="toc" id="toc"></ol>
+            <p class="toc-empty" id="toc-empty" hidden>Ничего не найдено.</p>
+        </aside>
+        <main class="content" id="top">
+            <div class="hero">
+                <span class="kicker">Основы программирования · тема 09</span>
+                <h1>Указатели</h1>
+                <p>Указатель хранит адрес. Разберём объявление, разыменование и связь с массивами — без лишней сложности.</p>
+                <div class="hero-stats">
+                    <span class="chip"><b id="stat-sections">0</b> разделов</span>
+                    <span class="chip"><b id="stat-demos">0</b> примеров C</span>
+                    <span class="chip"><b id="stat-qa">0</b> вопросов</span>
+                </div>
+            </div>
+<section class="lesson" id="s0" data-num="0" data-title="Память и адрес">
+<script type="text/markdown">
+Каждая переменная лежит в памяти по некоторому **адресу**.
+
+- `&x` — «где лежит x»
+- указатель `p` хранит такой адрес
+- `*p` — «значение по этому адресу»
+</script>
+</section>
+
+<section class="lesson" id="s1" data-num="1" data-title="Синтаксис">
+<script type="text/markdown">
+```c
+int x = 10;
+int *p = &x;   /* p указывает на x */
+printf("%d", *p);  /* 10 */
+*p = 25;           /* меняем x через указатель */
+```
+
+Тип указателя должен совпадать: `int *` → на `int`, `double *` → на `double`.
+</script>
+
+<div class="cpp" data-title="Через указатель меняем переменную" data-desc="После *p = 25 переменная x тоже 25.">
+<script type="text/cpp">
+#include <stdio.h>
+
+int main(void) {
+    int x = 10;
+    int *p = &x;
+    printf("x=%d *p=%d\n", x, *p);
+    *p = 25;
+    printf("x=%d *p=%d\n", x, *p);
+    return 0;
+}
+</script>
+<script type="application/json">{"stdout": "x=10 *p=10\nx=25 *p=25"}</script>
+</div>
+</section>
+
+<section class="lesson" id="s2" data-num="2" data-title="NULL">
+<script type="text/markdown">
+Указатель может никуда не указывать: `NULL` (из `<stdio.h>` / `<stddef.h>`).  
+Разыменовывать пустой указатель **нельзя** — программа упадёт.
+</script>
+
+<div class="cpp" data-title="Проверка на NULL" data-desc="Безопасный шаблон.">
+<script type="text/cpp">
+#include <stdio.h>
+
+int main(void) {
+    int *p = NULL;
+    if (p == NULL) {
+        printf("p pust\n");
+    }
+    int y = 3;
+    p = &y;
+    if (p != NULL) {
+        printf("*p=%d\n", *p);
+    }
+    return 0;
+}
+</script>
+<script type="application/json">{"stdout": "p pust\n*p=3"}</script>
+</div>
+</section>
+
+<section class="lesson" id="s3" data-num="3" data-title="Указатель и массив">
+<script type="text/markdown">
+Имя массива связано с адресом первого элемента. Можно писать:
+
+```c
+int a[3] = {1, 2, 3};
+int *p = a;      /* как &a[0] */
+printf("%d", *(p + 1));  /* 2 */
+```
+
+Арифметика указателей: `p+1` сдвигает на следующий элемент **того же типа** (не на 1 байт).
+</script>
+
+<div class="cpp" data-title="Обход массива указателем" data-desc="Эквивалент циклу по индексам.">
+<script type="text/cpp">
+#include <stdio.h>
+
+int main(void) {
+    int a[4] = {4, 5, 6, 7};
+    int *p = a;
+    int i;
+    for (i = 0; i < 4; i++) {
+        printf("%d ", *(p + i));
+    }
+    printf("\n");
+    return 0;
+}
+</script>
+<script type="application/json">{"stdout": "4 5 6 7 "}</script>
+</div>
+</section>
+
+<section class="lesson" id="s4" data-num="4" data-title="Зачем указатели (идея)">
+<script type="text/markdown">
+Позже: передача больших данных в функции без копирования, динамическая память (`malloc`/`free`), структуры данных.  
+Сейчас достаточно уверенно читать `&`, `*`, `int *`.
+</script>
+</section>
+
+<section class="lesson" id="s5" data-num="5" data-title="Самопроверка">
+<script type="text/markdown">
+Сначала ответьте сами, затем откройте правильный ответ.
+</script>
+<details class="qa"><summary>1. Что возвращает <code>&amp;x</code>?</summary><div class="qa-a">Адрес переменной x.</div></details>
+<details class="qa"><summary>2. Что делает <code>*p</code>?</summary><div class="qa-a">Разыменование — доступ к значению по адресу.</div></details>
+<details class="qa"><summary>3. Можно ли писать <code>*NULL</code>?</summary><div class="qa-a">Нет, это ошибка времени выполнения.</div></details>
+</section>
+
+            <footer class="page-foot">
+                <p>Вывод в примерах <strong>симулирован</strong> (типичный результат). Скопируйте код (.c) и проверьте в Visual Studio, Code::Blocks или на onlinegdb.com (язык C).</p>
+            </footer>
+        </main>
+    </div>
+    <button class="icon-btn to-top" type="button" aria-label="Наверх">↑</button>
+    <script src="../../assets/lesson.js"></script>
+    <script src="../../assets/course-nav.js"></script>
+</body>
+</html>

@@ -1,0 +1,144 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Побитовые операторы — FP.curs</title>
+    <meta name="description" content="Биты, маски, &, |, ^, ~, сдвиги — с примерами на C.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="../../assets/lesson.css">
+    <link rel="stylesheet" href="../../assets/course-nav.css">
+</head>
+<body>
+    <header class="topbar">
+        <button class="icon-btn menu-btn" id="menu" type="button" aria-label="Список тем курса" aria-expanded="false">☰</button>
+        <a class="brand" href="../../index.html">
+            <span class="brand-mark">FP<span>.</span>curs</span>
+            <span class="brand-sub">Тема 08 · C</span>
+        </a>
+        <div class="topbar-actions">
+            <button class="icon-btn" id="theme" type="button">Тема: auto</button>
+        </div>
+        <span class="progress" aria-hidden="true"></span>
+    </header>
+    <button type="button" class="nav-backdrop" id="nav-backdrop" aria-label="Закрыть меню" aria-hidden="true"></button>
+    <div class="layout">
+        <aside class="sidebar" id="sidebar" aria-label="Темы курса">
+            <div class="search">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7" cy="7" r="5"/><path d="m11 11 3.5 3.5"/></svg>
+                <input id="search" type="search" placeholder="Поиск темы…" aria-label="Поиск темы">
+            </div>
+            <ol class="toc" id="toc"></ol>
+            <p class="toc-empty" id="toc-empty" hidden>Ничего не найдено.</p>
+        </aside>
+        <main class="content" id="top">
+            <div class="hero">
+                <span class="kicker">Основы программирования · тема 08</span>
+                <h1>Побитовые операторы</h1>
+                <p>Целые числа в памяти — наборы битов. Кратко, но с понятными примерами операций над битами.</p>
+                <div class="hero-stats">
+                    <span class="chip"><b id="stat-sections">0</b> разделов</span>
+                    <span class="chip"><b id="stat-demos">0</b> примеров C</span>
+                    <span class="chip"><b id="stat-qa">0</b> вопросов</span>
+                </div>
+            </div>
+<section class="lesson" id="s0" data-num="0" data-title="Зачем это нужно">
+<script type="text/markdown">
+Обычная арифметика работает с «числом целиком». Побитовые операторы смотрят на **отдельные биты** (0 и 1).
+
+Где встречается: флаги настроек, низкоуровневый код, олимпиадные трюки, компрессия. На базовом курсе важно **не путать** с логическими `&&` и `||`.
+</script>
+</section>
+
+<section class="lesson" id="s1" data-num="1" data-title="Двоичная запись (напоминание)">
+<script type="text/markdown">
+Пример: число **5** → двоичное `101`, число **3** → `011` (дописываем нули слева для наглядности).
+
+Операции выполняются **поразрядно**.
+</script>
+</section>
+
+<section class="lesson" id="s2" data-num="2" data-title="Операторы">
+<script type="text/markdown">
+| Оп. | Имя | Идея |
+|---|---|---|
+| `&` | AND | 1 только если оба бита 1 |
+| `|` | OR | 1 если хотя бы один 1 |
+| `^` | XOR | 1 если биты разные |
+| `~` | NOT | инверсия битов |
+| `<<` | сдвиг влево | умножение на 2^k (для беззнаковой идеи) |
+| `>>` | сдвиг вправо | деление на 2^k (осторожно со знаком) |
+</script>
+
+<div class="cpp" data-title="AND OR XOR и сдвиг" data-desc="5 = 101, 3 = 011.">
+<script type="text/cpp">
+#include <stdio.h>
+
+int main(void) {
+    int a = 5; /* 101 */
+    int b = 3; /* 011 */
+    printf("a&b = %d\n", a & b);   /* 001 = 1 */
+    printf("a|b = %d\n", a | b);   /* 111 = 7 */
+    printf("a^b = %d\n", a ^ b);   /* 110 = 6 */
+    printf("a<<1 = %d\n", a << 1); /* 1010 = 10 */
+    printf("a>>1 = %d\n", a >> 1); /* 10 = 2 */
+    return 0;
+}
+</script>
+<script type="application/json">{"stdout": "a&b = 1\na|b = 7\na^b = 6\na<<1 = 10\na>>1 = 2"}</script>
+</div>
+</section>
+
+<section class="lesson" id="s3" data-num="3" data-title="Маска: проверить бит">
+<script type="text/markdown">
+Частый приём: «включён ли младший бит?» → `x & 1`.  
+Чётность: если `(x & 1) == 0` — чётное (для неотрицательных в учебном смысле).
+</script>
+
+<div class="cpp" data-title="Чётность через бит" data-desc="Сравните с классическим % 2.">
+<script type="text/cpp">
+#include <stdio.h>
+
+int main(void) {
+    int x = 8;
+    if ((x & 1) == 0) printf("chetnoe\n");
+    else printf("nechetnoe\n");
+    return 0;
+}
+</script>
+<script type="application/json">{"stdout": "chetnoe"}</script>
+</div>
+</section>
+
+<section class="lesson" id="s4" data-num="4" data-title="Не путать!">
+<script type="text/markdown">
+| Побитовое | Логическое |
+|---|---|
+| `&` `|` | `&&` `||` |
+| для битов чисел | для условий true/false |
+
+В `if` почти всегда нужны **логические** операторы.
+</script>
+</section>
+
+<section class="lesson" id="s5" data-num="5" data-title="Самопроверка">
+<script type="text/markdown">
+Сначала ответьте сами, затем откройте правильный ответ.
+</script>
+<details class="qa"><summary>1. Чему равно <code>5 &amp; 3</code>?</summary><div class="qa-a">1.</div></details>
+<details class="qa"><summary>2. Чему равно <code>5 | 3</code>?</summary><div class="qa-a">7.</div></details>
+<details class="qa"><summary>3. Чем <code>&amp;</code> отличается от <code>&amp;&amp;</code>?</summary><div class="qa-a">Побитовое И против логического И в условиях.</div></details>
+</section>
+
+            <footer class="page-foot">
+                <p>Вывод в примерах <strong>симулирован</strong> (типичный результат). Скопируйте код (.c) и проверьте в Visual Studio, Code::Blocks или на onlinegdb.com (язык C).</p>
+            </footer>
+        </main>
+    </div>
+    <button class="icon-btn to-top" type="button" aria-label="Наверх">↑</button>
+    <script src="../../assets/lesson.js"></script>
+    <script src="../../assets/course-nav.js"></script>
+</body>
+</html>

@@ -1,0 +1,236 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Операторы цикла — FP.curs</title>
+    <meta name="description" content="while, do-while, for, вложенные циклы, типичные задачи.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="../../assets/lesson.css">
+    <link rel="stylesheet" href="../../assets/course-nav.css">
+</head>
+<body>
+    <header class="topbar">
+        <button class="icon-btn menu-btn" id="menu" type="button" aria-label="Список тем курса" aria-expanded="false">☰</button>
+        <a class="brand" href="../../index.html">
+            <span class="brand-mark">FP<span>.</span>curs</span>
+            <span class="brand-sub">Тема 07 · C</span>
+        </a>
+        <div class="topbar-actions">
+            <button class="icon-btn" id="theme" type="button">Тема: auto</button>
+        </div>
+        <span class="progress" aria-hidden="true"></span>
+    </header>
+    <button type="button" class="nav-backdrop" id="nav-backdrop" aria-label="Закрыть меню" aria-hidden="true"></button>
+    <div class="layout">
+        <aside class="sidebar" id="sidebar" aria-label="Темы курса">
+            <div class="search">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7" cy="7" r="5"/><path d="m11 11 3.5 3.5"/></svg>
+                <input id="search" type="search" placeholder="Поиск темы…" aria-label="Поиск темы">
+            </div>
+            <ol class="toc" id="toc"></ol>
+            <p class="toc-empty" id="toc-empty" hidden>Ничего не найдено.</p>
+        </aside>
+        <main class="content" id="top">
+            <div class="hero">
+                <span class="kicker">Основы программирования · тема 07</span>
+                <h1>Операторы цикла</h1>
+                <p>Цикл повторяет действия. Подробно разберём while, do-while, for и типовые шаблоны задач на C.</p>
+                <div class="hero-stats">
+                    <span class="chip"><b id="stat-sections">0</b> разделов</span>
+                    <span class="chip"><b id="stat-demos">0</b> примеров C</span>
+                    <span class="chip"><b id="stat-qa">0</b> вопросов</span>
+                </div>
+            </div>
+<section class="lesson" id="s0" data-num="0" data-title="Идея цикла">
+<script type="text/markdown">
+Пока условие истинно (или счётчик в диапазоне) — выполнять тело.
+
+Три вопроса к любому циклу:
+
+1. **Где начинается** переменная цикла?
+2. **Когда заканчиваем**?
+3. **Что меняется** на каждом шаге? (иначе — бесконечный цикл)
+</script>
+</section>
+
+<section class="lesson" id="s1" data-num="1" data-title="while">
+<script type="text/markdown">
+```c
+while (условие) {
+    /* тело */
+}
+```
+
+Проверка **перед** телом → тело может не выполниться ни разу.
+</script>
+
+<div class="cpp" data-title="while: сумма 1..n" data-desc="Классический накопитель.">
+<script type="text/cpp">
+#include <stdio.h>
+
+int main(void) {
+    int n = 5;
+    int s = 0;
+    int i = 1;
+    while (i <= n) {
+        s += i;
+        i++;
+    }
+    printf("sum = %d\n", s);
+    return 0;
+}
+</script>
+<script type="application/json">{"stdout": "sum = 15"}</script>
+</div>
+
+<div class="cpp" data-title="while: ввод до нуля (симуляция)" data-desc="Пока не встретим 0 — суммируем. Данные: 3 5 2 0">
+<script type="text/cpp">
+#include <stdio.h>
+
+int main(void) {
+    int x;
+    int s = 0;
+    printf("Vvod (0=stop): ");
+    scanf("%d", &x);       /* 3 */
+    while (x != 0) {
+        s += x;
+        scanf("%d", &x);   /* 5, потом 2, потом 0 */
+    }
+    printf("sum = %d\n", s);
+    return 0;
+}
+</script>
+<script type="application/json">{"stdout": "Vvod (0=stop): 3 5 2 0\nsum = 10"}</script>
+</div>
+</section>
+
+<section class="lesson" id="s2" data-num="2" data-title="do-while">
+<script type="text/markdown">
+```c
+do {
+    /* тело */
+} while (условие);
+```
+
+Тело выполнится **хотя бы один раз**. Удобно для меню: «показать → спросить → пока не выход».
+</script>
+
+<div class="cpp" data-title="do-while минимум один раз" data-desc="Условие сразу ложно — но тело уже сработало.">
+<script type="text/cpp">
+#include <stdio.h>
+
+int main(void) {
+    int x = 0;
+    do {
+        printf("body once\n");
+        x++;
+    } while (x < 0);
+    return 0;
+}
+</script>
+<script type="application/json">{"stdout": "body once"}</script>
+</div>
+</section>
+
+<section class="lesson" id="s3" data-num="3" data-title="for">
+<script type="text/markdown">
+```c
+for (инициализация; условие; шаг) {
+    тело;
+}
+```
+
+Эквивалент частому `while` со счётчиком. Предпочтителен, когда число повторений ясно.
+</script>
+
+<div class="cpp" data-title="for: факториал n" data-desc="n! = 1*2*…*n">
+<script type="text/cpp">
+#include <stdio.h>
+
+int main(void) {
+    int n = 5;
+    long long f = 1;
+    int i;
+    for (i = 1; i <= n; i++) {
+        f *= i;
+    }
+    printf("%d! = %lld\n", n, f);
+    return 0;
+}
+</script>
+<script type="application/json">{"stdout": "5! = 120"}</script>
+</div>
+
+<div class="cpp" data-title="for: таблица умножения на 7" data-desc="Печать 7×1 … 7×10.">
+<script type="text/cpp">
+#include <stdio.h>
+
+int main(void) {
+    int i;
+    for (i = 1; i <= 10; i++) {
+        printf("7 x %d = %d\n", i, 7 * i);
+    }
+    return 0;
+}
+</script>
+<script type="application/json">{"stdout": "7 x 1 = 7\n7 x 2 = 14\n7 x 3 = 21\n7 x 4 = 28\n7 x 5 = 35\n7 x 6 = 42\n7 x 7 = 49\n7 x 8 = 56\n7 x 9 = 63\n7 x 10 = 70"}</script>
+</div>
+</section>
+
+<section class="lesson" id="s4" data-num="4" data-title="Вложенные циклы">
+<script type="text/markdown">
+Цикл внутри цикла — для таблиц, матриц, перебора пар `(i, j)`.
+</script>
+
+<div class="cpp" data-title="Прямоугольник из звёздочек" data-desc="Внешний — строки, внутренний — столбцы.">
+<script type="text/cpp">
+#include <stdio.h>
+
+int main(void) {
+    int rows = 3, cols = 5;
+    int i, j;
+    for (i = 0; i < rows; i++) {
+        for (j = 0; j < cols; j++) {
+            printf("*");
+        }
+        printf("\n");
+    }
+    return 0;
+}
+</script>
+<script type="application/json">{"stdout": "*****\n*****\n*****"}</script>
+</div>
+</section>
+
+<section class="lesson" id="s5" data-num="5" data-title="break и continue (кратко)">
+<script type="text/markdown">
+- `break` — немедленно выйти из **текущего** цикла;
+- `continue` — перейти к следующей итерации.
+
+Используйте умеренно, чтобы логика оставалась прозрачной.
+</script>
+</section>
+
+<section class="lesson" id="s6" data-num="6" data-title="Самопроверка">
+<script type="text/markdown">
+Сначала ответьте сами, затем откройте правильный ответ.
+</script>
+<details class="qa"><summary>1. Чем while отличается от do-while?</summary><div class="qa-a">do-while выполнит тело хотя бы один раз.</div></details>
+<details class="qa"><summary>2. Что обязательно менять в while?</summary><div class="qa-a">Переменную, от которой зависит условие — иначе бесконечный цикл.</div></details>
+<details class="qa"><summary>3. Когда for удобнее while?</summary><div class="qa-a">Когда есть явный счётчик и известны границы.</div></details>
+<details class="qa"><summary>4. Сколько раз внешний цикл при rows=3, cols=5 печатает перевод строки?</summary><div class="qa-a">3 раза (по числу строк).</div></details>
+</section>
+
+            <footer class="page-foot">
+                <p>Вывод в примерах <strong>симулирован</strong> (типичный результат). Скопируйте код (.c) и проверьте в Visual Studio, Code::Blocks или на onlinegdb.com (язык C).</p>
+            </footer>
+        </main>
+    </div>
+    <button class="icon-btn to-top" type="button" aria-label="Наверх">↑</button>
+    <script src="../../assets/lesson.js"></script>
+    <script src="../../assets/course-nav.js"></script>
+</body>
+</html>

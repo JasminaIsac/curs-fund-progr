@@ -1,0 +1,222 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Использование функций — FP.curs</title>
+    <meta name="description" content="Объявление, определение, параметры, return, прототипы, область видимости.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="../../assets/lesson.css">
+    <link rel="stylesheet" href="../../assets/course-nav.css">
+</head>
+<body>
+    <header class="topbar">
+        <button class="icon-btn menu-btn" id="menu" type="button" aria-label="Список тем курса" aria-expanded="false">☰</button>
+        <a class="brand" href="../../index.html">
+            <span class="brand-mark">FP<span>.</span>curs</span>
+            <span class="brand-sub">Тема 14 · C</span>
+        </a>
+        <div class="topbar-actions">
+            <button class="icon-btn" id="theme" type="button">Тема: auto</button>
+        </div>
+        <span class="progress" aria-hidden="true"></span>
+    </header>
+    <button type="button" class="nav-backdrop" id="nav-backdrop" aria-label="Закрыть меню" aria-hidden="true"></button>
+    <div class="layout">
+        <aside class="sidebar" id="sidebar" aria-label="Темы курса">
+            <div class="search">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7" cy="7" r="5"/><path d="m11 11 3.5 3.5"/></svg>
+                <input id="search" type="search" placeholder="Поиск темы…" aria-label="Поиск темы">
+            </div>
+            <ol class="toc" id="toc"></ol>
+            <p class="toc-empty" id="toc-empty" hidden>Ничего не найдено.</p>
+        </aside>
+        <main class="content" id="top">
+            <div class="hero">
+                <span class="kicker">Основы программирования · тема 14</span>
+                <h1>Использование функций</h1>
+                <p>Функции структурируют программу. Разберём синтаксис, виды функций и типичные ошибки на C.</p>
+                <div class="hero-stats">
+                    <span class="chip"><b id="stat-sections">0</b> разделов</span>
+                    <span class="chip"><b id="stat-demos">0</b> примеров C</span>
+                    <span class="chip"><b id="stat-qa">0</b> вопросов</span>
+                </div>
+            </div>
+<section class="lesson" id="s0" data-num="0" data-title="Зачем функции">
+<script type="text/markdown">
+1. **Повторное использование** — написали один раз, вызываем много раз.
+2. **Читаемость** — `max2(a,b)` понятнее, чем снова копировать if.
+3. **Разделение ответственности** — ввод / счёт / вывод в разных функциях.
+
+```c
+тип_результата имя(список_параметров) {
+    /* тело */
+    return значение; /* если тип не void */
+}
+```
+</script>
+</section>
+
+<section class="lesson" id="s1" data-num="1" data-title="Функция с возвратом значения">
+<div class="cpp" data-title="max2 и вызовы" data-desc="Несколько вызовов из main.">
+<script type="text/cpp">
+#include <stdio.h>
+
+int max2(int a, int b) {
+    if (a > b) return a;
+    return b;
+}
+
+int main(void) {
+    printf("%d\n", max2(8, 12));
+    printf("%d\n", max2(-3, -7));
+    printf("%d\n", max2(5, 5));
+    return 0;
+}
+</script>
+<script type="application/json">{"stdout": "12\n-3\n5"}</script>
+</div>
+
+<div class="cpp" data-title="Степень n^k (цикл)" data-desc="Функция power.">
+<script type="text/cpp">
+#include <stdio.h>
+
+long long power(int n, int k) {
+    long long r = 1;
+    int i;
+    for (i = 0; i < k; i++) r *= n;
+    return r;
+}
+
+int main(void) {
+    printf("%lld\n", power(2, 10));
+    printf("%lld\n", power(3, 4));
+    return 0;
+}
+</script>
+<script type="application/json">{"stdout": "1024\n81"}</script>
+</div>
+</section>
+
+<section class="lesson" id="s2" data-num="2" data-title="void-функции">
+<script type="text/markdown">
+`void` — «ничего не возвращает». Используют для печати, смены логики без результата.
+</script>
+
+<div class="cpp" data-title="void printLine" data-desc="Только побочный эффект — вывод.">
+<script type="text/cpp">
+#include <stdio.h>
+
+void printLine(int n, char ch) {
+    int i;
+    for (i = 0; i < n; i++) printf("%c", ch);
+    printf("\n");
+}
+
+int main(void) {
+    printLine(5, '*');
+    printLine(3, '-');
+    return 0;
+}
+</script>
+<script type="application/json">{"stdout": "*****\n---"}</script>
+</div>
+</section>
+
+<section class="lesson" id="s3" data-num="3" data-title="Параметры по значению">
+<script type="text/markdown">
+По умолчанию в функцию приходит **копия**. Изменение параметра внутри не меняет переменную в `main`.
+
+(Позже: указатели — чтобы менять оригинал через адрес.)
+</script>
+
+<div class="cpp" data-title="Копия не меняет оригинал" data-desc="После вызова x в main всё ещё 5.">
+<script type="text/cpp">
+#include <stdio.h>
+
+void addTen(int x) {
+    x = x + 10;
+    printf("vnutri x=%d\n", x);
+}
+
+int main(void) {
+    int x = 5;
+    addTen(x);
+    printf("v main x=%d\n", x);
+    return 0;
+}
+</script>
+<script type="application/json">{"stdout": "vnutri x=15\nv main x=5"}</script>
+</div>
+</section>
+
+<section class="lesson" id="s4" data-num="4" data-title="Прототип (объявление)">
+<script type="text/markdown">
+Если функция определена **ниже** `main`, нужен прототип сверху:
+
+```c
+int max2(int a, int b); /* объявление */
+
+int main(void) {
+    printf("%d", max2(1, 2));
+    return 0;
+}
+
+int max2(int a, int b) { /* определение */
+    ...
+}
+```
+</script>
+
+<div class="cpp" data-title="Прототип перед main" data-desc="Сначала объявили, потом определили.">
+<script type="text/cpp">
+#include <stdio.h>
+
+int sum3(int a, int b, int c); /* прототип */
+
+int main(void) {
+    printf("%d\n", sum3(1, 2, 3));
+    return 0;
+}
+
+int sum3(int a, int b, int c) {
+    return a + b + c;
+}
+</script>
+<script type="application/json">{"stdout": "6"}</script>
+</div>
+</section>
+
+<section class="lesson" id="s5" data-num="5" data-title="Классификация (для ответа на экзамене)">
+<script type="text/markdown">
+| Вид | Пример |
+|---|---|
+| без параметров, без результата | `void hello(void);` |
+| без параметров, с результатом | `int readInt(void);` |
+| с параметрами, без результата | `void printSum(int, int);` |
+| с параметрами, с результатом | `double avg(double, double);` |
+</script>
+</section>
+
+<section class="lesson" id="s6" data-num="6" data-title="Самопроверка">
+<script type="text/markdown">
+Сначала ответьте сами, затем откройте правильный ответ.
+</script>
+<details class="qa"><summary>1. Что делает return в int-функции?</summary><div class="qa-a">Завершает функцию и передаёт значение вызывающему коду.</div></details>
+<details class="qa"><summary>2. Почему x в main не изменился после addTen(x)?</summary><div class="qa-a">Параметр передан по значению — изменилась копия.</div></details>
+<details class="qa"><summary>3. Зачем прототип?</summary><div class="qa-a">Чтобы компилятор знал функцию до её полного определения.</div></details>
+<details class="qa"><summary>4. Может ли void-функция содержать return без значения?</summary><div class="qa-a">Да, <code>return;</code> просто завершает функцию.</div></details>
+</section>
+
+            <footer class="page-foot">
+                <p>Вывод в примерах <strong>симулирован</strong> (типичный результат). Скопируйте код (.c) и проверьте в Visual Studio, Code::Blocks или на onlinegdb.com (язык C).</p>
+            </footer>
+        </main>
+    </div>
+    <button class="icon-btn to-top" type="button" aria-label="Наверх">↑</button>
+    <script src="../../assets/lesson.js"></script>
+    <script src="../../assets/course-nav.js"></script>
+</body>
+</html>

@@ -1,0 +1,225 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Арифметические операторы и преобразование типов — FP.curs</title>
+    <meta name="description" content="Арифметика, приоритет, ++/--, приведения.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="../../assets/lesson.css">
+    <link rel="stylesheet" href="../../assets/course-nav.css">
+</head>
+<body>
+    <header class="topbar">
+        <button class="icon-btn menu-btn" id="menu" type="button" aria-label="Список тем курса" aria-expanded="false">☰</button>
+        <a class="brand" href="../../index.html">
+            <span class="brand-mark">FP<span>.</span>curs</span>
+            <span class="brand-sub">Тема 05 · C</span>
+        </a>
+        <div class="topbar-actions">
+            <button class="icon-btn" id="theme" type="button">Тема: auto</button>
+        </div>
+        <span class="progress" aria-hidden="true"></span>
+    </header>
+    <button type="button" class="nav-backdrop" id="nav-backdrop" aria-label="Закрыть меню" aria-hidden="true"></button>
+    <div class="layout">
+        <aside class="sidebar" id="sidebar" aria-label="Темы курса">
+            <div class="search">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7" cy="7" r="5"/><path d="m11 11 3.5 3.5"/></svg>
+                <input id="search" type="search" placeholder="Поиск темы…" aria-label="Поиск темы">
+            </div>
+            <ol class="toc" id="toc"></ol>
+            <p class="toc-empty" id="toc-empty" hidden>Ничего не найдено.</p>
+        </aside>
+        <main class="content" id="top">
+            <div class="hero">
+                <span class="kicker">Основы программирования · тема 05</span>
+                <h1>Арифметические операторы и преобразование типов</h1>
+                <p>Разберём все арифметические операторы, приоритет, инкремент и правила смешения типов в C.</p>
+                <div class="hero-stats">
+                    <span class="chip"><b id="stat-sections">0</b> разделов</span>
+                    <span class="chip"><b id="stat-demos">0</b> примеров C</span>
+                    <span class="chip"><b id="stat-qa">0</b> вопросов</span>
+                </div>
+            </div>
+<section class="lesson" id="s0" data-num="0" data-title="Операторы">
+<script type="text/markdown">
+| Оп. | Смысл | Пример | Результат (идея) |
+|---|---|---|---|
+| `+` `-` `*` `/` | +, −, ×, ÷ | `3+4` | 7 |
+| `%` | остаток | `14%5` | 4 |
+| `++` | +1 | `++x` / `x++` | увеличить |
+| `--` | −1 | `--x` / `x--` | уменьшить |
+| унарный `-` | смена знака | `-x` | |
+
+Составные: `+=`, `-=`, `*=`, `/=`, `%=`  
+`x += 2;` то же, что `x = x + 2;`
+</script>
+
+<div class="cpp" data-title="Арифметика на практике" data-desc="Базовые операции.">
+<script type="text/cpp">
+#include <stdio.h>
+
+int main(void) {
+    int a = 14, b = 5;
+    printf("a+b=%d\n", a + b);
+    printf("a-b=%d\n", a - b);
+    printf("a*b=%d\n", a * b);
+    printf("a/b=%d\n", a / b);
+    printf("a%%b=%d\n", a % b);
+    return 0;
+}
+</script>
+<script type="application/json">{"stdout": "a+b=19\na-b=9\na*b=70\na/b=2\na%b=4"}</script>
+</div>
+</section>
+
+<section class="lesson" id="s1" data-num="1" data-title="Приоритет и скобки">
+<script type="text/markdown">
+Сначала `*` `/` `%`, потом `+` `-`. Одинаковый приоритет — слева направо.
+
+Всегда можно поставить `( )`, если сомневаетесь.
+</script>
+
+<div class="cpp" data-title="Приоритет" data-desc="Сравните варианты.">
+<script type="text/cpp">
+#include <stdio.h>
+int main(void) {
+    printf("%d\n", 2 + 3 * 4);
+    return 0;
+}
+</script>
+<script type="application/json">{"stdout": "14", "variants": [{"label": "2+3*4", "code": "#include <stdio.h>\nint main(void){ printf(\"%d\\n\", 2+3*4); return 0; }", "stdout": "14"}, {"label": "(2+3)*4", "code": "#include <stdio.h>\nint main(void){ printf(\"%d\\n\", (2+3)*4); return 0; }", "stdout": "20"}, {"label": "10-6/2", "code": "#include <stdio.h>\nint main(void){ printf(\"%d\\n\", 10-6/2); return 0; }", "stdout": "7"}]}</script>
+</div>
+</section>
+
+<section class="lesson" id="s2" data-num="2" data-title="Инкремент">
+<script type="text/markdown">
+- **Префикс** `++x` — сначала увеличить, потом использовать.
+- **Постфикс** `x++` — сначала использовать, потом увеличить.
+
+Пока в учёбе чаще пишите отдельно: `x = x + 1;` или `++x;` в цикле — так яснее.
+</script>
+
+<div class="cpp" data-title="++ префикс и постфикс" data-desc="Разница видна при печати.">
+<script type="text/cpp">
+#include <stdio.h>
+
+int main(void) {
+    int x = 5;
+    printf("%d\n", ++x); /* 6, x уже 6 */
+    printf("%d\n", x++); /* 6, потом x станет 7 */
+    printf("%d\n", x);   /* 7 */
+    return 0;
+}
+</script>
+<script type="application/json">{"stdout": "6\n6\n7"}</script>
+</div>
+</section>
+
+<section class="lesson" id="s3" data-num="3" data-title="Преобразование типов">
+<script type="text/markdown">
+### Неявное
+
+При смешении типов в одном выражении компилятор **поднимает** операнды к общему типу (usual arithmetic conversions). Правило в двух словах: **побеждает более «широкий» тип**.
+
+### Явное (C-стиль)
+
+```c
+(double)a / b;
+(int)3.9;     /* → 3 (дробь отбрасывается) */
+```
+
+> [!WARN]
+> Запись `double` в `int` **теряет** дробную часть. Это не «округление 0.5 вверх».
+</script>
+
+<figure class="type-ladder" aria-label="Схема продвижения типов при арифметике">
+    <figcaption><strong>Схема:</strong> кто с кем «смешивается» и куда поднимается</figcaption>
+    <div class="tl-ladder" role="img" aria-label="Лестница продвижения типов">
+        <div class="tl-rung tl-wide"><span class="tl-type">double</span><span class="tl-hint">вещественный, 8 байт</span></div>
+        <div class="tl-arrow" aria-hidden="true">↑ при операции с double</div>
+        <div class="tl-rung"><span class="tl-type">float</span><span class="tl-hint">вещественный, 4 байта</span></div>
+        <div class="tl-arrow" aria-hidden="true">↑ при операции с float / double</div>
+        <div class="tl-rung"><span class="tl-type">long long</span><span class="tl-hint">большое целое, 8 байт</span></div>
+        <div class="tl-arrow" aria-hidden="true">↑ при операции с long long</div>
+        <div class="tl-rung tl-base"><span class="tl-type">int</span><span class="tl-hint">целое «по умолчанию»</span></div>
+        <div class="tl-fork">
+            <div class="tl-up" aria-hidden="true">↗ integer promotion ↖</div>
+            <div class="tl-smalls">
+                <span class="tl-chip">bool</span>
+                <span class="tl-chip">char</span>
+                <span class="tl-chip">short</span>
+            </div>
+            <p class="tl-note">Перед арифметикой <code>bool</code>, <code>char</code>, <code>short</code> почти всегда становятся <code>int</code>.</p>
+        </div>
+        <div class="tl-side">
+            <span class="tl-chip tl-u">unsigned int</span>
+            <p class="tl-note">Смешение со <code>signed</code> часто даёт <code>unsigned</code> — сравнивайте осторожно.</p>
+        </div>
+    </div>
+    <p class="tl-rule"><strong>Правило:</strong> в выражении <code>A ⊕ B</code> оба операнда приводятся к типу «выше по лестнице». Пример: <code>int + double → double</code>, <code>char * int → int</code>, <code>float / double → double</code>.</p>
+    <div class="table-wrap">
+        <table class="tl-matrix">
+            <caption>Результат бинарной операции (учебная таблица)</caption>
+            <thead>
+                <tr>
+                    <th>A \ B</th>
+                    <th>bool</th>
+                    <th>char</th>
+                    <th>int</th>
+                    <th>long long</th>
+                    <th>float</th>
+                    <th>double</th>
+                    <th>unsigned</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><th>bool</th><td>int</td><td>int</td><td>int</td><td>long long</td><td>float</td><td>double</td><td>unsigned</td></tr>
+                <tr><th>char</th><td>int</td><td>int</td><td>int</td><td>long long</td><td>float</td><td>double</td><td>unsigned</td></tr>
+                <tr><th>int</th><td>int</td><td>int</td><td>int</td><td>long long</td><td>float</td><td>double</td><td>unsigned</td></tr>
+                <tr><th>long long</th><td>long long</td><td>long long</td><td>long long</td><td>long long</td><td>float*</td><td>double</td><td>см. ниже</td></tr>
+                <tr><th>float</th><td>float</td><td>float</td><td>float</td><td>float*</td><td>float</td><td>double</td><td>float</td></tr>
+                <tr><th>double</th><td>double</td><td>double</td><td>double</td><td>double</td><td>double</td><td>double</td><td>double</td></tr>
+                <tr><th>unsigned</th><td>unsigned</td><td>unsigned</td><td>unsigned</td><td>см. ниже</td><td>float</td><td>double</td><td>unsigned</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <p class="tl-foot">* <code>long long</code> + <code>float</code>: обычно к <code>float</code> (возможна потеря точности целого). «см. ниже»: ранг <code>unsigned</code> / <code>long long</code> зависит от платформы — на экзамене достаточно помнить, что смешение знаковых и беззнаковых требует явного приведения.</p>
+</figure>
+
+<div class="cpp" data-title="Приведения" data-desc="Варианты смешения типов.">
+<script type="text/cpp">
+#include <stdio.h>
+int main(void) {
+    int a = 7, b = 2;
+    printf("%d\n", a / b);
+    return 0;
+}
+</script>
+<script type="application/json">{"stdout": "3", "variants": [{"label": "7/2 int", "code": "#include <stdio.h>\nint main(void){ int a=7,b=2; printf(\"%d\\n\", a/b); return 0;}", "stdout": "3"}, {"label": "(double)a/b", "code": "#include <stdio.h>\nint main(void){ int a=7,b=2; printf(\"%g\\n\", (double)a/b); return 0;}", "stdout": "3.5"}, {"label": "double→int", "code": "#include <stdio.h>\nint main(void){ double y=3.9; int x=y; printf(\"%d\\n\", x); return 0;}", "stdout": "3"}, {"label": "int+double", "code": "#include <stdio.h>\nint main(void){ printf(\"%g\\n\", 5 + 2.5); return 0;}", "stdout": "7.5"}]}</script>
+</div>
+</section>
+
+<section class="lesson" id="s4" data-num="4" data-title="Самопроверка">
+<script type="text/markdown">
+Сначала ответьте сами, затем откройте правильный ответ.
+</script>
+<details class="qa"><summary>1. Чему равно <code>17 % 5</code>?</summary><div class="qa-a">2.</div></details>
+<details class="qa"><summary>2. Чему равно <code>2 + 3 * 4</code>?</summary><div class="qa-a">14.</div></details>
+<details class="qa"><summary>3. Как аккуратно разделить int a на int b с дробным результатом?</summary><div class="qa-a"><code>(double)a / b</code>.</div></details>
+<details class="qa"><summary>4. Что напечатает <code>int x=5; printf("%d", x++);</code>?</summary><div class="qa-a">5, а после этого x станет 6.</div></details>
+</section>
+
+            <footer class="page-foot">
+                <p>Вывод в примерах <strong>симулирован</strong> (типичный результат). Скопируйте код (.c) и проверьте в Visual Studio, Code::Blocks или на onlinegdb.com (язык C).</p>
+            </footer>
+        </main>
+    </div>
+    <button class="icon-btn to-top" type="button" aria-label="Наверх">↑</button>
+    <script src="../../assets/lesson.js"></script>
+    <script src="../../assets/course-nav.js"></script>
+</body>
+</html>
